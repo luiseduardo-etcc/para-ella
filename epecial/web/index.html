@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para Lexi ❤️</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+        height: 100vh;
+        background: linear-gradient(135deg, #ff4e8d, #ff1f68);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    /* --- ESTRUCTURA DE LIBRO ABIERTO --- */
+    .container-pro {
+        display: flex;
+        flex-direction: row;
+        gap: 15px;
+        width: 95%;
+        max-width: 950px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .base-card {
+        background: #efe3d6;
+        border-radius: 35px;
+        padding: 35px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        height: 85vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* CARTA IZQUIERDA: El Mensaje */
+    .text-extension {
+        flex: 1.2; /* Un poco más ancha para el texto */
+        justify-content: center;
+        overflow-y: auto;
+    }
+
+    .message-text {
+        font-family: 'Dancing Script', cursive;
+        font-size: 1.5rem;
+        color: #444;
+        line-height: 1.6;
+        white-space: pre-wrap;
+    }
+
+    .cursor {
+        display: inline-block; width: 3px; height: 1.5rem; background-color: #ff1f68;
+        margin-left: 5px; animation: blink 0.7s infinite;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    /* CARTA DERECHA: El Árbol (DISEÑO RESTAURADO) */
+    .card-right {
+        flex: 1;
+        align-items: center;
+        position: relative;
+    }
+
+    .title {
+        align-self: flex-start; font-family: 'Dancing Script', cursive;
+        font-size: 1.8rem; color: #444; margin-bottom: 10px;
+    }
+
+    /* --- ESTILOS DEL ÁRBOL FRONDOSO --- */
+    .tree-wrapper {
+        position: relative; width: 100%; height: 65%;
+        display: flex; justify-content: center; align-items: flex-end;
+    }
+
+    svg { overflow: visible; z-index: 2; }
+    /* Tronco grueso restaurado */
+    .trunk { fill: #5d341a; stroke: #5d341a; stroke-linecap: round; }
+    .branch {
+        fill: none; stroke: #5d341a; stroke-width: 3; stroke-linecap: round;
+        stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: draw 2s forwards ease-in-out;
+    }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+
+    /* Follaje denso */
+    .leaf {
+        position: absolute; font-size: var(--size); color: var(--color);
+        opacity: 0; transform: translate(-50%, -50%) scale(0);
+        animation: growLeaf 0.8s forwards ease-out; z-index: 3;
+    }
+    @keyframes growLeaf { to { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(var(--rot)); } }
+
+    /* Pétalos intensos */
+    .petal {
+        position: absolute; font-size: 12px; color: #ff4d94;
+        animation: fall linear infinite; pointer-events: none;
+    }
+    @keyframes fall {
+        0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+        100% { transform: translate(-100px, 400px) rotate(360deg); opacity: 0; }
+    }
+
+    /* --- CONTADOR CON FRASE RESTAURADA --- */
+    .counter-area {
+        width: 100%; margin-top: auto; padding-top: 20px;
+        border-top: 1px solid rgba(0,0,0,0.1); text-align: left;
+    }
+    .counter-label { font-size: 0.9rem; color: #666; margin-bottom: 5px; }
+    .timer { font-weight: 600; color: #222; font-size: 1rem; }
+
+    /* Adaptación para celulares */
+    @media (max-width: 850px) {
+        .container-pro { flex-direction: column; height: auto; padding: 20px 0; }
+        .base-card { width: 90%; height: auto; min-height: 50vh; }
+        .card-right { height: 75vh; }
+    }
+</style>
+</head>
+<body>
+
+    <div class="container-pro">
+        <div class="base-card text-extension">
+            <div id="typing-text" class="message-text"></div>
+            <span class="cursor"></span>
+        </div>
+
+        <div class="base-card card-right">
+            <div class="title">Para Ti ❤️ Lexi</div>
+
+            <div class="tree-wrapper" id="container">
+                <svg width="200" height="300" viewBox="0 0 200 300">
+                    <path class="trunk" d="M90 300 L110 300 L105 200 L95 200 Z" />
+                    <path class="branch" d="M100 200 Q 100 150 100 80" />
+                    <path class="branch" d="M100 180 Q 70 150 50 120" />
+                    <path class="branch" d="M100 170 Q 130 140 150 110" />
+                    <path class="branch" d="M100 140 Q 85 110 75 90" />
+                </svg>
+            </div>
+
+            <div class="counter-area">
+                <div class="counter-label">Mi amor por ti comenzó hace...</div>
+                <div id="counter" class="timer"></div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    /* 1. CONTADOR (30/11/2025) */
+    const startDate = new Date("2025-11-30T00:00:00");
+    function update() {
+        const now = new Date();
+        const diff = now - startDate;
+        const d = Math.floor(diff / 86400000);
+        const h = Math.floor((diff % 86400000) / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        document.getElementById("counter").innerHTML = `${d} días ${h} horas ${m} minutos ${s} segundos`;
+    }
+    setInterval(update, 1000);
+    update();
+
+    /* 2. COPA DE CORAZÓN VOLUMINOSA (Restaurada) */
+    function generateCrown() {
+        const container = document.getElementById("container");
+        const centerX = container.offsetWidth / 2;
+        const centerY = container.offsetHeight * 0.35;
+        const colors = ['#ff0000', '#d61c4e', '#ff4d94', '#ff3366', '#ff85b3'];
+        
+        // Follaje muy denso (1200 hojas)
+        for(let i = 0; i < 1200; i++) {
+            let t = Math.random() * Math.PI * 2;
+            let r = Math.sqrt(Math.random());
+            let x = 16 * Math.pow(Math.sin(t), 3);
+            let y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+            const leaf = document.createElement("div");
+            leaf.className = "leaf";
+            leaf.innerHTML = "❤";
+            // Escala y tamaños grandes para volumen
+            leaf.style.left = (centerX + x * 7.5 * r) + "px";
+            leaf.style.top = (centerY + y * 7.5 * r) + "px";
+            leaf.style.setProperty('--size', (8 + Math.random() * 15) + "px");
+            leaf.style.setProperty('--color', colors[Math.floor(Math.random()*colors.length)]);
+            leaf.style.setProperty('--rot', (Math.random() * 360) + "deg");
+            leaf.style.animationDelay = (1.5 + Math.random() * 1.5) + "s";
+            container.appendChild(leaf);
+        }
+        // Iniciar escritura después de que crezca el árbol
+        setTimeout(typeWriter, 3000);
+    }
+    setTimeout(generateCrown, 100);
+
+    /* 3. TEXTO AUTOMÁTICO (Typewriter) */
+    const message = `Para mi querida Lexi.\n\nSi me dijeran que tuviera que reiniciar mi vida y si cambiaria algo en ese reinicio, la verdad es que no cambiaria el día en que te conocí y me encariñe contigo.\n\nPues te volviste esa pequeña luz que volvió a darme esa alegría de levantarme aun cuando ya habiaperdido todo.\n\nTe amo Lexi.`;
+    let index = 0;
+    function typeWriter() {
+        if (index < message.length) {
+            document.getElementById("typing-text").innerHTML += message.charAt(index);
+            index++;
+            setTimeout(typeWriter, 50);
+        }
+    }
+
+    /* 4. LLUVIA DE PÉTALOS INTENSA */
+    function createPetal() {
+        const container = document.getElementById("container");
+        const p = document.createElement("div");
+        p.className = "petal";
+        p.innerHTML = "❤️";
+        p.style.left = (container.offsetWidth / 2 + (Math.random() - 0.5) * 160) + "px";
+        p.style.top = (container.offsetHeight * 0.35) + "px";
+        const dur = 3 + Math.random() * 4;
+        p.style.animationDuration = dur + "s";
+        container.appendChild(p);
+        setTimeout(() => p.remove(), dur * 1000);
+    }
+    setInterval(createPetal, 150);
+</script>
+</body>
+</html>
