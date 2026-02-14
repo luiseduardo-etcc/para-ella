@@ -114,11 +114,40 @@
     .counter-label { font-size: 0.9rem; color: #666; margin-bottom: 5px; }
     .timer { font-weight: 600; color: #222; font-size: 1rem; }
 
-    /* Adaptación para celulares */
+    /* Adaptación real para celulares (Versión Final) */
     @media (max-width: 850px) {
-        .container-pro { flex-direction: column; height: auto; padding: 20px 0; }
-        .base-card { width: 90%; height: auto; min-height: 50vh; }
-        .card-right { height: 75vh; }
+        body {
+            overflow-y: auto; /* Permite bajar con el dedo para ver todo */
+            padding: 10px;
+        }
+        
+        .container-pro {
+            flex-direction: column; /* Pone el mensaje y el árbol uno sobre otro */
+            height: auto;
+            gap: 20px;
+        }
+
+        .base-card {
+            width: 100%;
+            height: auto; 
+            min-height: 400px;
+            padding: 25px;
+        }
+
+        .card-right {
+            height: 600px; 
+            order: -1; /* Esto hace que el árbol aparezca ARRIBA del texto */
+        }
+
+        .message-text {
+            font-size: 1.2rem; /* Texto más cómodo para leer en celular */
+        }
+
+        /* ESCALA EL ÁRBOL PARA QUE NO SE SALGA */
+        svg {
+            transform: scale(0.8) translateX(-50%); 
+            transform-origin: bottom;
+        }
     }
 </style>
 </head>
